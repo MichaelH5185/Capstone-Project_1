@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,8 +6,9 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>StudyBud</title>
     <meta name='viewport' content = 'width=device-width, initial-scale=1'> 
-    <!-- <link rel ='stylesheet' type='text/css' media='screen' href='main.css'> -->
-
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+    {%block title %}
+    {%endblock%}
 </head>
 
 <body>
