@@ -1,0 +1,17 @@
+*{
+    margin: 0%;
+    padding: 0%;
+}
+.nav{
+    padding: 1%;
+    background-color: green;
+}
+.nav a{
+    text-decoration: none;
+}
+.main{
+    padding-left:15%; 
+    padding-right:15%; 
+    padding-top: 1%;
+    padding-bottom: 1%;
+}

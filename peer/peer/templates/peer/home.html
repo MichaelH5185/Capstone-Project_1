@@ -1,35 +1,44 @@
 {% extends 'template.html' %}
+{% block title %}
+<title>PeerSkill | Home</title>
+{% endblock %}
 
 {% block content %}
 
-<section class="listings">
-	<div class="listings-header">
-		<h2>Listings</h2>
-		<a class="btn" href="{% url 'create_listing' %}">Create a new listing</a>
-	</div>
+<div class="main">
+    <h1>Welcome to PeerSkill, your home to help and find help!</h1>
+    <h2>About PeerSkill</h2>
+    <p>PeerSkill is a community-based skill exchange portal designed to connect people who need help with peers willing to share their expertise. Users create accounts to post requests or advertise skills, browse available opportunities, and communicate through a simple messaging feature. A tipping option lets clients reward helpers for their time or cover related expenses, encouraging continued participation. By supporting secure profiles, searchable listings, and transparent tipping records, PeerSkill streamlines local collaboration while strengthening trust and cooperation within the community. The target users are students, neighbors, and other community members who want affordable, reliable help and opportunities to contribute their own skills.</p>
+</div>
 
-	{% if listings %}
-		<div class="cards">
-			{% for l in listings %}
-				<article class="card listing-card">
-					<h3 class="listing-title">{{ l.title }}</h3>
-					<p class="listing-desc">{{ l.description|default:"(no description)" }}</p>
-					<div class="listing-meta">
-						<span class="author">{{ l.author.username|default:'Anon' }}</span>
-						{% if l.price %}<span class="price">${{ l.price }}</span>{% endif %}
-					</div>
-					<div class="card-actions">
-						<a class="btn small" href="{% url 'send_message' l.id %}">Message</a>
-						{% if request.user.is_authenticated and request.user == l.author %}
-							<a class="btn small danger" href="{% url 'delete_listing' l.id %}">Delete</a>
-						{% endif %}
-					</div>
-				</article>
-			{% endfor %}
-		</div>
-	{% else %}
-		<p>No listings yet.</p>
-	{% endif %}
+<section class="listings">
+    <div class="listings-header">
+        <h2>Listings</h2>
+        <a class="btn" href="{% url 'create_listing' %}">Create a new listing</a>
+    </div>
+
+    {% if listings %}
+        <div class="cards">
+            {% for l in listings %}
+                <article class="card listing-card">
+                    <h3 class="listing-title">{{ l.title }}</h3>
+                    <p class="listing-desc">{{ l.description|default:"(no description)" }}</p>
+                    <div class="listing-meta">
+                        <span class="author">{{ l.author.username|default:'Anon' }}</span>
+                        {% if l.price %}<span class="price">${{ l.price }}</span>{% endif %}
+                    </div>
+                    <div class="card-actions">
+                        <a class="btn small" href="{% url 'send_message' l.id %}">Message</a>
+                        {% if request.user.is_authenticated and request.user == l.author %}
+                            <a class="btn small danger" href="{% url 'delete_listing' l.id %}">Delete</a>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No listings yet.</p>
+    {% endif %}
 </section>
 
 {% endblock %}
