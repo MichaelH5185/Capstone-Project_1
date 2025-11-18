@@ -87,8 +87,9 @@ class Profile(models.Model):
 class Board(models.Model):
     skill = models.ForeignKey(Skill, on_delete=models.SET_NULL, null=True)
     sub_skill = models.CharField(max_length=50)
-    creator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    creator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="creator")
     created = models.DateTimeField(auto_now_add=True)
+    moderator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="moderator")
 
 class BoardMessage(models.Model):
     poster = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
