@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'peer',
+    'peer.apps.PeerConfig',
+    'peer.user.apps.UserConfig',
+    'peer.listing.apps.ListingConfig',
+    'peer.board.apps.BoardConfig',
 ]
 
 MIDDLEWARE = [

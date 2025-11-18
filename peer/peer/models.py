@@ -74,7 +74,7 @@ class Message(models.Model):
         )
         return f"Message from {sender_label}"
  
-class Review(models.model):
+class Review(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="reviews_received")
     receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False)
     message = models.CharField(max_length=200, null=True, blank=True)
@@ -85,13 +85,13 @@ class Profile(models.Model):
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False)
     
 class Board(models.Model):
-    skill = models.ForeignKey(Skill, null=True)
+    skill = models.ForeignKey(Skill, on_delete=models.SET_NULL, null=True)
     sub_skill = models.CharField(max_length=50)
     creator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
 class BoardMessage(models.Model):
-    poster = models.ForeignKey(CustomUser, on_delete=models.SET_NULL)
+    poster = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     reply_to = models.ForeignKey("self", on_delete=models.SET_NULL, related_name="Replies", null=True)
     content = models.TextField()
     time_posted = models.DateTimeField(auto_now_add=True)
