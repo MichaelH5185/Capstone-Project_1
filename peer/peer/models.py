@@ -29,6 +29,16 @@ class Listing(models.Model):
         return f"{self.title} ({'Request' if self.is_request else 'Offer'})"
 
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    skills = models.CharField(max_length=300, blank=True)
+    town = models.CharField(max_length=100, blank=True)
+    zipcode = models.CharField(max_length=20, blank=True)
+    state = models.CharField(max_length=50, blank=True)
+
+    def __str__(self):
+        return f"Profile for {self.user.username}"
+
 class Message(models.Model):
     """A simple message optionally attached to a Listing."""
     sender = models.ForeignKey(

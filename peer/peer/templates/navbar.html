@@ -17,7 +17,16 @@
             <span class="welcome">Hi, {{ request.user.username }}</span>
             <a class="btn" href="{% url 'logout' %}">Log out</a>
         {% else %}
-            <a class="btn" href="{% url 'login' %}">Log in</a>
+                        <a class="btn" href="{% url 'login' %}">Log in</a>
+                        <a class="btn" href="{% url 'register' %}">Register</a>
         {% endif %}
     </div>
 </nav>
+
+{# Show about information to anonymous visitors in the header area #}
+{% if not request.user.is_authenticated %}
+    <div class="anon-about" style="padding:0.8rem; background:#f8f9fa;">
+        <strong>About PeerSkill:</strong>
+        <p style="margin:.5rem 0;">PeerSkill is a community-based skill exchange portal designed to connect people who need help with peers willing to share their expertise. Users create accounts to post requests or advertise skills, browse available opportunities, and communicate through a simple messaging feature. A tipping option lets clients reward helpers for their time or cover related expenses, encouraging continued participation. By supporting secure profiles, searchable listings, and transparent tipping records, PeerSkill streamlines local collaboration while strengthening trust and cooperation within the community.</p>
+    </div>
+{% endif %}

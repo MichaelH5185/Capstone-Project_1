@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
-from .models import Listing, Message
+from .models import Listing, Message, Profile
 
 
 User = get_user_model()
@@ -72,3 +72,46 @@ class ListingMessageTests(TestCase):
 		resp = self.client.post(url, {'sender_name': '', 'content': 'Hi'})
 		self.assertEqual(resp.status_code, 302)
 		self.assertEqual(Message.objects.count(), 0)
+
+
+class ProfileTests(TestCase):
+	def test_create_profile_model(self):
+		# create a user and associated profile
+		user = User.objects.create_user(username='profuser', password='pwd')
+		Profile.objects.create(
+			user=user,
+			skills='python, django',
+			town='Townsville',
+			zipcode='12345',
+			state='CA',
+		)
+		self.assertEqual(Profile.objects.count(), 1)
+		p = Profile.objects.get(user=user)
+		self.assertEqual(p.skills, 'python, django')
+		self.assertEqual(p.town, 'Townsville')
+		self.assertEqual(p.zipcode, '12345')
+		self.assertEqual(p.state, 'CA')
+
+	def test_register_view_creates_user_and_profile(self):
+		url = reverse('register')
+		data = {
+			'username': 'newuser',
+			'password1': 'complexpassword123',
+			'password2': 'complexpassword123',
+			'skills': 'testing, django',
+			'town': 'Smalltown',
+			'zipcode': '99999',
+			'state': 'TX',
+		}
+		resp = self.client.post(url, data)
+		# after registration we redirect to login
+		self.assertEqual(resp.status_code, 302)
+		User = get_user_model()
+		self.assertTrue(User.objects.filter(username='newuser').exists())
+		user = User.objects.get(username='newuser')
+		self.assertTrue(Profile.objects.filter(user=user).exists())
+		p = Profile.objects.get(user=user)
+		self.assertEqual(p.skills, 'testing, django')
+		self.assertEqual(p.town, 'Smalltown')
+		self.assertEqual(p.zipcode, '99999')
+		self.assertEqual(p.state, 'TX')
