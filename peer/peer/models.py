@@ -4,11 +4,11 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Skill(models.Model):
-    name = models.CharField(max_length=50, unique=True, null=False)
+    name = models.CharField(max_length=50, unique=True)
 
 
 class CustomUser(AbstractUser):
-    username = models.CharField(max_length=50, null=False, unique=True)
+    username = models.CharField(max_length=50, unique=True)
     rating = models.FloatField(default=5)
     skills = models.ManyToManyField(Skill, blank=True)
     rating_count = models.IntegerField(default=0)
@@ -41,7 +41,7 @@ class Listing(models.Model):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="profile")
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, related_name="profile")
     skills = models.CharField(max_length=300, blank=True)
     town = models.CharField(max_length=100, blank=True)
     zipcode = models.CharField(max_length=20, blank=True)
