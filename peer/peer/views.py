@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 
 from .models import Listing
-from .forms import ListingForm, MessageForm
+from .forms import ListingForm, MessageForm, UserRegistrationForm
 
 
 def home(request):
@@ -24,6 +24,18 @@ def create_listing(request):
     else:
         form = ListingForm()
     return render(request, 'peer/listing_form.html', {'form': form})
+
+
+def register(request):
+    """Register a new user and create their Profile."""
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'peer/register.html', {'form': form})
 
 
 @login_required
