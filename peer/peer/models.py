@@ -2,21 +2,24 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 
+
 class Skill(models.Model):
-    name = models.CharField(max_length=50, unique=True, null=False)
-    
+    name = models.CharField(max_length=50, unique=True)
+
+
 class CustomUser(AbstractUser):
-    username = models.CharField(max_length=50, null=False, unique=True)
+    username = models.CharField(max_length=50, unique=True)
     rating = models.FloatField(default=5)
     skills = models.ManyToManyField(Skill, blank=True)
     rating_count = models.IntegerField(default=0)
-    
+
+
 #Should we change it so that if the user that created the listing is deleted it deletes the posting?
 class Listing(models.Model):
     """A skill listing or a request posted by a user."""
     author = models.ForeignKey(
         CustomUser,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name="listings",
@@ -35,6 +38,17 @@ class Listing(models.Model):
 
     def __str__(self):
         return f"{self.title} ({'Request' if self.is_request else 'Offer'})"
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, related_name="profile")
+    skills = models.CharField(max_length=300, blank=True)
+    town = models.CharField(max_length=100, blank=True)
+    zipcode = models.CharField(max_length=20, blank=True)
+    state = models.CharField(max_length=50, blank=True)
+
+    def __str__(self):
+        return f"Profile for {self.user.username}"
 
 
 class Message(models.Model):
@@ -73,23 +87,23 @@ class Message(models.Model):
             self.sender_name or (self.sender.username if self.sender else "Anon")
         )
         return f"Message from {sender_label}"
- 
+
+
 class Review(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="reviews_received")
     receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False)
     message = models.CharField(max_length=200, null=True, blank=True)
     rating = models.IntegerField(default=5)
     time_created = models.DateTimeField(auto_now_add=True)
-    
-class Profile(models.Model):
-    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False)
-    
+
+
 class Board(models.Model):
     skill = models.ForeignKey(Skill, on_delete=models.SET_NULL, null=True)
     sub_skill = models.CharField(max_length=50)
     creator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="creator")
     created = models.DateTimeField(auto_now_add=True)
     moderator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="moderator")
+
 
 class BoardMessage(models.Model):
     poster = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
