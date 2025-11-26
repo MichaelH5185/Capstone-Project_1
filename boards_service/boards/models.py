@@ -6,6 +6,7 @@ class Board(models.Model):
     creator = models.IntegerField(null=True, related_name="creator")
     created = models.DateTimeField(auto_now_add=True)
     moderator = models.IntegerField(null=True, related_name="moderator")
+    name = models.TextField()
 
 class BoardMessage(models.Model):
     poster = models.IntegerField(null=True)
