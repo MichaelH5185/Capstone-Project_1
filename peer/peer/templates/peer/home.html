@@ -12,7 +12,7 @@
 <section class="listings">
     <div class="listings-header">
         <h2>Listings</h2>
-        <a class="btn" href="{% url 'create_listing' %}">Create a new listing</a>
+        <a class="btn" href="{% url 'peer:create_listing' %}">Create a new listing</a>
     </div>
 
     {% if listings %}
@@ -26,9 +26,9 @@
                         {% if l.price %}<span class="price">${{ l.price }}</span>{% endif %}
                     </div>
                     <div class="card-actions">
-                        <a class="btn small" href="{% url 'send_message' l.id %}">Message</a>
+                        <a class="btn small" href="{% url 'peer:send_message' l.id %}">Message</a>
                         {% if request.user.is_authenticated and request.user == l.author %}
-                            <a class="btn small danger" href="{% url 'delete_listing' l.id %}">Delete</a>
+                            <a class="btn small danger" href="{% url 'peer:delete_listing' l.id %}">Delete</a>
                         {% endif %}
                     </div>
                 </article>

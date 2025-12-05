@@ -1,0 +1,20 @@
+{% extends 'template.html' %}
+
+{% block content %}
+{% if message %}
+<p class="error">{{ message }}</p>
+{% endif %}
+<h2>login</h2> 
+<form method ="POST" action="">
+    {% csrf_token %}
+    <label>Email: </label>
+    <input type="text" name="email" placeholder="Enter Email"/>
+    <br>
+    <label>Password: </label>
+    <input type="password" name="password" placeholder="Enter Password"/>
+    <br>
+    <input type="submit" value="Log In"/>
+</form>
+<p>Haven't signed up yet?</p>
+<a href="{% url 'user:register' %}">Sign up</a>
+{% endblock %}

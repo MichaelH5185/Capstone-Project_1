@@ -38,9 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'peer.apps.PeerConfig',
-    'peer.user.apps.UserConfig',
-    'peer.listing.apps.ListingConfig',
-    'peer.board.apps.BoardConfig',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +55,7 @@ ROOT_URLCONF = 'peerSkill.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'peer' / 'templates'],
+        'DIRS': [BASE_DIR / 'peer' / 'templates', BASE_DIR / 'peer' / 'user' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

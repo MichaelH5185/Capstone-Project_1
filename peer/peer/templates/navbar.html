@@ -1,24 +1,24 @@
 {% load static %}
 <nav class="navbar">
     <div class="nav-left">
-        <a class="brand" href="{% url 'home' %}">
+        <a class="brand" href="{% url 'peer:home' %}">
             <img src="{% static 'peer/logo.png' %}" alt="Site logo" class="logo">
             <span class="brand-text">PeerSkill</span>
         </a>
     </div>
 
     <ul class="nav-links">
-        <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="{% url 'create_listing' %}">Listings</a></li>
+        <li><a href="{% url 'peer:home' %}">Home</a></li>
+        <li><a href="{% url 'peer:create_listing' %}">Listings</a></li>
     </ul>
 
     <div class="nav-right">
         {% if request.user.is_authenticated %}
             <span class="welcome">Hi, {{ request.user.username }}</span>
-            <a class="btn" href="{% url 'logout' %}">Log out</a>
+            <a class="btn" href="{% url 'user:logout' %}">Log out</a>
         {% else %}
-            <a class="btn" href="{% url 'login' %}">Log in</a>
-            <a class="btn" href="{% url 'register' %}">Register</a>
+            <a class="btn" href="{% url 'user:login' %}">Log in</a>
+            <a class="btn" href="{% url 'user:register' %}">Register</a>
         {% endif %}
     </div>
 </nav>

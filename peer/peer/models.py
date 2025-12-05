@@ -9,6 +9,7 @@ class Skill(models.Model):
 
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=50, unique=True)
+    email = models.CharField(max_length=50, unique=True)
     rating = models.FloatField(default=5)
     skills = models.ManyToManyField(Skill, blank=True)
     rating_count = models.IntegerField(default=0)

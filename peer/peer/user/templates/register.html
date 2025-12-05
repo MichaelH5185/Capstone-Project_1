@@ -1,11 +1,65 @@
 {# peer/templates/template.html #}
-{% extends "peer/template.html" %}
+{% extends "template.html" %}
+<script>
+  const select = document.getElementById("item_select");
+  const hiddenField = document.getElementById("selected_items");
+  const display = document.getElementById("display_area");
 
+  function render(items) {
+    display.innerHTML = "";
+    items.forEach(item => {
+      const div = document.createElement("div");
+      div.textContent = item;
+      display.appendChild(div);
+    });
+  }
+
+  select.addEventListener("change", function () {
+    const value = this.value;
+    if (!value) return;
+
+    let items = hiddenField.value ? hiddenField.value.split(",") : [];
+
+    if (!items.includes(value)) {
+      items.push(value);
+      hiddenField.value = items.join(",");
+      render(items);
+    }
+
+    this.value = "";
+  });
+</script>
 {% block content %}
-    <h2>Register</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
+<h2>Register</h2>
+<form method="POST" action="">
+    {% csrf_token %}
+    <label>Username:</label>
+    <input type="text" name="username" placeholder="Pick A Username"/>
+    <br>
+    <label>Email: </label>
+    <input type="text" name="email" placeholder="Enter Email"/>
+    <br>
+    <label>Password: </label>
+    <input type="password" name="password" placeholder="Create a Password"/>
+    <br>
+    <label>Enter Password Again: </label>
+    <input type="password" name="password2" placeholder="Re-input the Password"/>
+    <br>
+    <label>Add Skills to Your Profile (you can add more later):</label>
+    <input type="hidden" id="selected_items" name="skills">
+    <br>
+    <select id="item_select" name="skillsList">
+        {%for s in skills %}
+        <option value="{{s.id}}">{{s.name}}</option>
+        {%endfor%}
+    </select>
+    <div id="display_area" style="margin-top: 10px;"></div>
+    {% if messages %}
+    {% for m in messages%}
+    <br>
+    <p class="error">{{m}}</p>
+    {% endfor %}
+    {% endif %}
+    <button type="submit">Create User</button>
+
 {% endblock %}
