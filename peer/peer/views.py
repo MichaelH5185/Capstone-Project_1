@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-
-from .models import Listing
+from django.contrib import messages
+from .models import Listing, Skill
 from .forms import ListingForm, MessageForm, UserRegistrationForm
 
 
@@ -65,6 +65,17 @@ def send_message(request, listing_id=None):
         form = MessageForm()
 
     return render(request, 'peer/message_form.html', {'form': form, 'listing': listing})
+
+@login_required
+def create_new_skill(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        if Skill.objects.filter(name = name).exists():
+            messages.error(request, "Skill Already Exists")
+            return redirect("peer:create-skill")
+        Skill.objects.create(name=name)
+        return redirect("peer:home")
+    return render(request, "skills/create_skill.html")
 
 
 @login_required
