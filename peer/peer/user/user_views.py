@@ -46,9 +46,9 @@ def registerPage(request):
         
         n_a = CustomUser.objects.create_user(username, emailAddr, password1)
         skills_ids = request.POST.getlist("skills")
-        ids = [int(x) for x in skills_ids.split(",") if x]
-        for id in ids:
-            n_a.skills.add(id)
+        for id in skills_ids:
+            if id != "":
+                n_a.skills.add(int(id))
         user = authenticate(request, username=username, password=password1)
         login(request, user)
         return redirect('peer:home')
