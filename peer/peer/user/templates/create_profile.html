@@ -1,0 +1,131 @@
+{% extends 'template.html' %}
+
+{% block content%}
+{% if action == "create" %}
+<h2>Setup Profile<h2>
+<form method="POST" action="">
+    {%csrf_token%}
+    <label>First Name: </label>
+    <input type="text" name="fname" placeholder="Enter Your First Name" required/>
+    <br>
+    <label>Last Name: </label>
+    <input type="text" name="lname" placeholder="Enter Your Last Name" required/>
+    <br>
+    <label>State: </label>
+    <input type="text" name="state" placeholder="Enter Your State" required/>
+    <br>
+    <label>Town: </label>
+    <input type="text" name="town" placeholder="Enter Your Town" required />
+    <br>
+    <label>Zipcode: </label>
+    <input type="text" name="zip" placeholder="Enter Your Zipcode" required />
+    <br>
+    <label>About Me: </label>
+    <textarea name="about_me" placeholder="A little about me..."></textarea>
+    <br>
+    <button type="submit">Create Profile</button>
+</form>
+{% else %}
+<h2>Edit Profile<h2>
+<form method="POST" action="">
+    {%csrf_token%}
+    <label>First Name: </label>
+    <input type="text" name="fname" placeholder="Enter Your First Name" value="{{finame}}" required/>
+    <br>
+    <label>Last Name: </label>
+    <input type="text" name="lname" placeholder="Enter Your Last Name" value="{{laname}}" required/>
+    <br>
+    <label>State: </label>
+    <input type="text" name="state" placeholder="Enter Your State" value="{{ustate}}" required/>
+    <br>
+    <label>Town: </label>
+    <input type="text" name="town" placeholder="Enter Your Town" value="{{utown}}" required/>
+    <br>
+    <label>Zipcode: </label>
+    <input type="text" name="zip" placeholder="Enter Your Zipcode" value="{{uzip}}" required/>
+    <br>
+    <label>About Me: </label>
+    <textarea name="about_me" placeholder="A little about me..." id="aboutme"></textarea>
+    <br>
+    <label>Skills: </label>
+    <select id="item_select" name="skillsList">
+        <option value="">-- Select Skills --</option> 
+        {%for s in skills %}
+        <option value="{{s.id}}" data-name="{{ s.name }}">{{s.name}}</option>
+        {%endfor%}
+    </select>
+    <input type="hidden" id="selected_items" name="skills" value="{% for s in user_skills %}{{ s.id }}{% if not forloop.last %},{% endif %}{% endfor %}">
+    <div id="display_area" style="margin-top: 10px;"></div>
+    <br>
+    <button type="submit">Update Profile</button>
+</form>
+<a href="{% url 'peer:create-skill' %}">Create New Skill</a>
+<script>
+    document.getElementById("aboutme").value = "{{uabout}}";
+    let initialItems = [
+        {% for s in user_skills %}
+            { id: {{ s.id }}, name: "{{ s.name }}" },
+        {% endfor %}
+    ];
+
+    const select = document.getElementById("item_select");
+    const hiddenField = document.getElementById("selected_items");
+    const display = document.getElementById("display_area");
+
+    function render(items) {
+        display.innerHTML = "";
+
+        items.forEach(({id, name}) => {
+            const wrapper = document.createElement("div");
+            wrapper.style.display = "flex";
+            wrapper.style.alignItems = "center";
+            wrapper.style.marginBottom = "5px";
+
+            const text = document.createElement("span");
+            text.textContent = name + " ";
+            text.style.marginRight = "10px";
+
+            const removeBtn = document.createElement("button");
+            removeBtn.textContent = "x";
+            removeBtn.style.cursor = "pointer";
+            removeBtn.style.padding = "2px 5px";
+
+            removeBtn.addEventListener("click", () => {
+                const updated = items.filter(item => item.id !== id);
+                hiddenField.value = updated.map(i => i.id).join(",");
+                render(updated);
+            });
+
+            wrapper.appendChild(text);
+            wrapper.appendChild(removeBtn);
+            display.appendChild(wrapper);
+        });
+
+        // Update currentItems globally
+        currentItems = items;
+    }
+
+    let currentItems = [...initialItems];
+
+    // Render the initial user skills on load
+    render(currentItems);
+
+    select.addEventListener("change", function () {
+        const id = parseInt(this.value);
+        if (!id) return;
+
+        const name = this.selectedOptions[0].dataset.name;
+
+        if (!currentItems.some(x => x.id === id)) {
+            currentItems.push({id: id, name: name});
+        }
+
+        hiddenField.value = currentItems.map(x => x.id).join(",");
+        render(currentItems);
+
+        this.value = "";
+    });
+</script>
+{% endif %}
+
+{% endblock %}

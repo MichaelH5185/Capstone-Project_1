@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login, logout, get_user
 from django.contrib import messages
-from peer.models import CustomUser, Skill
+from peer.models import CustomUser, Skill, Profile, Review
+from django.urls import reverse
 
 def loginPage(request):
     if request.method == 'POST': 
@@ -58,3 +59,69 @@ def registerPage(request):
 def logoutUser(request):
     logout(request)
     return redirect('user:login')
+
+@login_required
+def createProfile(request):
+    if request.method == "POST":
+        user = CustomUser.objects.get(username=request.user.username)
+        user.last_name = request.POST.get('lname')
+        user.first_name = request.POST.get('fname')
+        user.save()
+        
+        state = request.POST.get('state')
+        town = request.POST.get('town')
+        zipcode = request.POST.get('zip')
+        about = request.POST.get('about_me')
+        
+        Profile.objects.create(user=user, town=town, state=state, zipcode=zipcode, about=about)
+        return render(reverse('user:view_profile', kwargs={'uid': user.id})) 
+    return render(request, 'create_profile.html', {'action':'create'})
+
+@login_required
+def updateProfile(request):
+    user = CustomUser.objects.get(username=request.user.username)
+    profile = get_object_or_404(Profile, user=user)
+    if request.method == "POST":
+        user.last_name = request.POST.get('lname')
+        user.first_name = request.POST.get('fname')
+        
+        profile.state = request.POST.get('state')
+        profile.town = request.POST.get('town')
+        profile.zipcode = request.POST.get('zip')
+        
+        user.skills.clear()
+        skills_ids = request.POST.getlist("skills")
+        for id in skills_ids:
+            if id != "":
+                user.skills.add(int(id))
+        user.save()
+        profile.save()
+        return redirect(reverse('user:view_profile', kwargs={'uid': user.id}))
+    context ={
+        'finame' : user.first_name,
+        'laname' : user.last_name,
+        'ustate' : profile.state,
+        'utown' : profile.town,
+        'uzip' : profile.zipcode,
+        'uabout': profile.about,
+        'user_skills': user.skills.all(),
+        'skills' : Skill.objects.all(),
+        'action' : 'update'
+    }
+    return render(request, 'create_profile.html', context)
+
+@login_required
+def viewProfile(request, uid):
+    if not Profile.objects.filter(user=request.user).exists():
+        if request.user.id == uid:
+            return redirect('user:create_profile')
+        return redirect('peer:home') #Possibly Replace with a standard 404-esq 
+    user = get_object_or_404(CustomUser, pk=uid)
+    profile = get_object_or_404(Profile, user=user)
+    reviews = list(Review.objects.filter(receiver=user))
+    context = {
+        'u' : user,
+        'p' : profile,
+        'reviews': reviews[:5]
+    }
+    return render(request, 'display_profile.html', context)

@@ -17,6 +17,7 @@
         {% if request.user.is_authenticated %}
             <span class="welcome">Hi, {{ request.user.username }}</span>
             <a class="btn" href="{% url 'user:logout' %}">Log out</a>
+            <a class="btn" href="{% url 'user:view_profile' request.user.id %}">View Profile</a>
         {% else %}
             <a class="btn" href="{% url 'user:login' %}">Log in</a>
             <a class="btn" href="{% url 'user:register' %}">Register</a>
