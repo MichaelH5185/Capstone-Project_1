@@ -84,7 +84,5 @@ def delete_listing(request, listing_id):
 @login_required
 def inbox(request):
     """Display all messages received by the current user."""
-    messages = Message.objects.filter(recipient=request.user)\
-        .select_related('sender', 'listing')\
-        .order_by('-created_at')
+    messages = Message.objects.filter(recipient=request.user).select_related('sender', 'listing').order_by('-created_at')
     return render(request, 'peer/inbox.html', {'messages': messages})
