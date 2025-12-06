@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 
-from .models import Listing
+from .models import Listing, Message
 from .forms import ListingForm, MessageForm, UserRegistrationForm
 
 
@@ -79,3 +79,12 @@ def delete_listing(request, listing_id):
         return redirect('home')
 
     return render(request, 'peer/listing_confirm_delete.html', {'listing': listing})
+
+
+@login_required
+def inbox(request):
+    """Display all messages received by the current user."""
+    messages = Message.objects.filter(recipient=request.user)\
+        .select_related('sender', 'listing')\
+        .order_by('-created_at')
+    return render(request, 'peer/inbox.html', {'messages': messages})
