@@ -23,5 +23,7 @@
 {%endif%}
 {% if u.username == request.user.username%}
 <a href="{% url 'user:update_profile' %}">Update Profile</a>
+{% else %}
+<a href="{% url 'user:leave_review' u.id %}">Leave Review</a>
 {% endif %}
 {% endblock %}

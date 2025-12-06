@@ -1,0 +1,22 @@
+{% extends 'template.html' %}
+
+{% block content %}
+<h2>Review of {{u.username}}</h2>
+<form method="POST" action=""> 
+    {%csrf_token%}
+    <label>Rating (out of 5 stars)</label>
+    <select name="rating" required>
+        <option value="5">5</option>
+        <option value="4">4</option>
+        <option value="3">3</option>
+        <option value="2">2</option>
+        <option value="1">1</option>
+    </select>
+    <br>
+    <label>Review</label>
+    <br>
+    <textarea name="review" placeholder="Describe your experience"></textarea>
+    <br>
+    <button type="submit">Leave Review</button>
+</form>
+{% endblock %}

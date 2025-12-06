@@ -125,3 +125,22 @@ def viewProfile(request, uid):
         'reviews': reviews[:5]
     }
     return render(request, 'display_profile.html', context)
+
+@login_required
+def leaveReview(request, uid):
+    receiver = get_object_or_404(CustomUser, pk=uid)
+    sender = get_object_or_404(CustomUser, pk=request.user.id)
+    if request.method == "POST":
+        rating = request.POST.get("rating")
+        review = request.POST.get("review")
+        
+        Review.objects.create(author=sender, receiver=receiver, message=review, rating=rating)
+        
+        num_rev = receiver.rating_count
+        cur_rat = receiver.rating
+        receiver.rating = round((((cur_rat*num_rev)+rating) / (num_rev+1)), 3) #decide wether it's worth it to recalculate the true mean using Review object 
+        receiver.rating_count += 1 
+        receiver.save()
+        redirect('peer:home')
+    #add logic to prevent more than one review on the same person
+    return render(request, 'create_review.html', {'u' : receiver})
