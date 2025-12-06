@@ -15,13 +15,13 @@ class CustomUser(AbstractUser):
     rating_count = models.IntegerField(default=0)
 
 
-#Should we change it so that if the user that created the listing is deleted it deletes the posting?
+
 class Listing(models.Model):
     """A skill listing or a request posted by a user."""
     author = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
-        null=True,
+        null=False,
         blank=True,
         related_name="listings",
     )
@@ -101,7 +101,8 @@ class Review(models.Model):
 
 class Board(models.Model):
     skill = models.ForeignKey(Skill, on_delete=models.SET_NULL, null=True)
-    sub_skill = models.CharField(max_length=50)
+    title = models.CharField(max_length=100, null=True)
+    description = models.CharField(max_length=200, null=True) 
     creator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="creator")
     created = models.DateTimeField(auto_now_add=True)
     moderator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="moderator")

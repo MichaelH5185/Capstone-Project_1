@@ -6,7 +6,7 @@ app_name = "peer"
 urlpatterns = [
     path('', views.home, name="home"),
     path('user/', include('peer.user.user_urls', namespace="user")),
-    #path('board/', include('peer.board.board_urls')),
+    path('board/', include('peer.board.board_urls', namespace="board")),
     path('listing/', include('peer.listing.listing_urls')), 
     path('create/', views.create_listing, name='create_listing'),
     path('message/<int:listing_id>/', views.send_message, name='send_message'),
