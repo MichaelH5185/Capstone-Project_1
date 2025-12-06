@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+
+from .models import Listing, Message, Skill
 from django.contrib import messages
-from .models import Listing, Skill, Message
+from .models import Listing, Skill
 from .forms import ListingForm, MessageForm, UserRegistrationForm
 
 
