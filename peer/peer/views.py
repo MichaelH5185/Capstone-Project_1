@@ -1,8 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+<<<<<<< HEAD
 
 from .models import Listing, Message
+=======
+from django.contrib import messages
+from .models import Listing, Skill
+>>>>>>> 196ed2251d8795621895cdf960bb4b4e739fa368
 from .forms import ListingForm, MessageForm, UserRegistrationForm
 
 
@@ -66,6 +71,17 @@ def send_message(request, listing_id=None):
 
     return render(request, 'peer/message_form.html', {'form': form, 'listing': listing})
 
+@login_required
+def create_new_skill(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        if Skill.objects.filter(name = name).exists():
+            messages.error(request, "Skill Already Exists")
+            return redirect("peer:create-skill")
+        Skill.objects.create(name=name)
+        return redirect("peer:home")
+    return render(request, "skills/create_skill.html")
+
 
 @login_required
 def delete_listing(request, listing_id):
@@ -86,3 +102,21 @@ def inbox(request):
     """Display all messages received by the current user."""
     messages = Message.objects.filter(recipient=request.user).select_related('sender', 'listing').order_by('-created_at')
     return render(request, 'peer/inbox.html', {'messages': messages})
+
+
+def create_new_skill(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        if Skill.objects.filter(name=name).exists():
+            messages.error(request, "Skill Already Exists")
+            return redirect("peer:create-skill")
+        Skill.objects.create(name=name)
+        return redirect("peer:home")
+    return render(request, "skills/create_skill.html")
+
+
+@login_required
+def inbox(request):
+    """Display all messages received by the current user."""
+    messages_list = Message.objects.filter(recipient=request.user).select_related('sender', 'listing').order_by('-created_at')
+    return render(request, 'peer/inbox.html', {'messages': messages_list})

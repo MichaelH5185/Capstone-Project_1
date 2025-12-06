@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class BoardConfig(AppConfig):
+class BoardsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'peer.board'
+    name = 'boards'

@@ -1,0 +1,27 @@
+{% extends 'template.html' %}
+
+{% block content %}
+<h2>{{u.username}}'s Profile</h2>
+<h3>My name </h3>
+<p>{{u.first_name}} {{u.last_name}}</p>
+<h3>About Me:<h3>
+<p>{{p.about}} </p>
+<h3>Located: <h3>
+<p> {{p.town}}, {{p.state}}, {{p.zipcode}}</p>
+<h3>My Rating: <h3>
+<p> {{u.rating}}/5.0 stars from {{u.rating_count}}</p>
+<h3>My Recent Reviews: </h3>
+{% if reviews%}
+{% for r in reviews %}
+<p>{{r.author.username}}'s Review</p> 
+<p><i>{{r.time_created}}</i></p>
+<p>Rating: {{r.rating}}/5.0</p>
+<p> {{r.message}}</p>
+{% endfor %}
+{% else%}
+<p>I don't have any ratings yet.</p>
+{%endif%}
+{% if u.username == request.user.username%}
+<a href="{% url 'user:update_profile' %}">Update Profile</a>
+{% endif %}
+{% endblock %}

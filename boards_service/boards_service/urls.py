@@ -1,5 +1,5 @@
 """
-URL configuration for peerSkill project.
+URL configuration for boards_service project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
@@ -14,12 +14,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from boards.views import BoardViewSet, BoardMessageViewSet
+
+router = DefaultRouter()
+router.register(r'boards', BoardViewSet)
+router.register(r'messages', BoardMessageViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('', include("peer.urls", namespace="peer")),
-    path('user/', include("peer.user.user_urls", namespace="user"))
+    path('api/', include(router.urls)),
 ]

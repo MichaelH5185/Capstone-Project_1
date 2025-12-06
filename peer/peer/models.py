@@ -9,6 +9,7 @@ class Skill(models.Model):
 
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=50, unique=True)
+    email = models.CharField(max_length=50, unique=True)
     rating = models.FloatField(default=5)
     skills = models.ManyToManyField(Skill, blank=True)
     rating_count = models.IntegerField(default=0)
@@ -46,7 +47,8 @@ class Profile(models.Model):
     town = models.CharField(max_length=100, blank=True)
     zipcode = models.CharField(max_length=20, blank=True)
     state = models.CharField(max_length=50, blank=True)
-
+    about = models.TextField(blank=True)
+    
     def __str__(self):
         return f"Profile for {self.user.username}"
 

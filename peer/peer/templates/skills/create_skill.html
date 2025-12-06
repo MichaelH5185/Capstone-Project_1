@@ -1,0 +1,19 @@
+{% extends "template.html" %}
+
+{% block content %}
+<h2>Create Skills</h2>
+<form method="POST" action="">
+    {% csrf_token %}
+    <label>Skill: </label>
+    <br>
+    <input type="text" name="name" placeholder="Enter Skill"/>
+    <br>
+    <input type="submit" value="Create Skill"/>
+</form>
+<a href="{% url 'peer:home' %}">Return Home</a>
+{%if messages%}
+{%for m in messages%}
+<p class="error">{{m}}</p>
+{%endfor%}
+{%endif%}
+{% endblock %}
