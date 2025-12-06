@@ -1,0 +1,36 @@
+{% extends 'template.html' %}
+
+{% block title %}
+<title>PeerSkill | Inbox</title>
+{% endblock %}
+
+{% block content %}
+<div class="main">
+    <h1>Your Messages</h1>
+</div>
+
+<section class="messages">
+    {% if messages %}
+        <div class="cards">
+            {% for msg in messages %}
+                <article class="card message-card">
+                    <div class="message-header">
+                        <strong>From: {{ msg.sender.username|default:"Anonymous" }}</strong>
+                        <span class="timestamp">{{ msg.created_at|date:"M d, Y g:i A" }}</span>
+                    </div>
+                    {% if msg.listing %}
+                        <div class="message-about">
+                            <small>About listing: <a href="{% url 'home' %}">{{ msg.listing.title }}</a></small>
+                        </div>
+                    {% endif %}
+                    <div class="message-content">
+                        <p>{{ msg.content }}</p>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No messages yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

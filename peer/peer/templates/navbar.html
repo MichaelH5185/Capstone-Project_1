@@ -10,6 +10,9 @@
     <ul class="nav-links">
         <li><a href="{% url 'home' %}">Home</a></li>
         <li><a href="{% url 'create_listing' %}">Listings</a></li>
+        {% if request.user.is_authenticated %}
+            <li><a href="{% url 'inbox' %}">Messages</a></li>
+        {% endif %}
     </ul>
 
     <div class="nav-right">
