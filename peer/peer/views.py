@@ -1,13 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-<<<<<<< HEAD
-
-from .models import Listing, Message
-=======
 from django.contrib import messages
-from .models import Listing, Skill
->>>>>>> 196ed2251d8795621895cdf960bb4b4e739fa368
+from .models import Listing, Skill, Message
 from .forms import ListingForm, MessageForm, UserRegistrationForm
 
 
