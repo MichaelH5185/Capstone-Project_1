@@ -1,0 +1,15 @@
+{% extends "template.html" %}
+
+{% block content%}
+<!--Search Bar and filters-->
+<h2 style="text-align: center;">Active Boards</h2>
+<br>
+<a href="{% url 'board:create_board' %}">Start a New Board!</a>
+<hr>
+{% for b in boards%}
+<a href="{% url 'board:display_board' b.id %}">{{b.title}}</a>
+<p>{{b.description}}</p>
+<p>Skill: {{b.skill}} Created: {{b.created}} Creator: {{b.creator}}</p>
+<hr>
+{% endfor %}
+{% endblock content%}

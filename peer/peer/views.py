@@ -89,7 +89,7 @@ def delete_listing(request, listing_id):
 
     if request.method == 'POST':
         listing.delete()
-        return redirect('home')
+        return redirect('peer:home')
 
     return render(request, 'peer/listing_confirm_delete.html', {'listing': listing})
 

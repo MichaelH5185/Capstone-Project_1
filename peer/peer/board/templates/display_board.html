@@ -1,0 +1,14 @@
+{% extends "template.html" %}
+
+{% block content %}
+<h2>{{b.title}}</h2>
+<p>{{b.description}}</p>
+{% if delete %}
+<a href="{% url 'board:delete_board' b.id %}">Delete Board</a>
+<a href="{% url 'board:edit_board' b.id%}">Edit Board</a>
+{% endif %}
+<br>
+<a href="">reply</a>
+<hr>
+<!--Display Board Messages-->
+{% endblock %}

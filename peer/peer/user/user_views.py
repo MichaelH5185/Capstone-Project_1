@@ -74,7 +74,7 @@ def createProfile(request):
         about = request.POST.get('about_me')
         
         Profile.objects.create(user=user, town=town, state=state, zipcode=zipcode, about=about)
-        return render(reverse('user:view_profile', kwargs={'uid': user.id})) 
+        return redirect(reverse('user:view_profile', kwargs={'uid': user.id})) 
     return render(request, 'create_profile.html', {'action':'create'})
 
 @login_required
