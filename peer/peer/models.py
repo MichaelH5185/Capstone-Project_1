@@ -105,7 +105,7 @@ class Board(models.Model):
     description = models.CharField(max_length=200, null=True) 
     creator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="creator")
     created = models.DateTimeField(auto_now_add=True)
-    moderator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="moderator")
+    moderators = models.ManyToManyField(CustomUser, blank=True, related_name="moderators")
 
 
 class BoardMessage(models.Model):

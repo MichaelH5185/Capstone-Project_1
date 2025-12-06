@@ -1,0 +1,57 @@
+{% extends 'template.html' %}
+
+{% block content %}
+{% if action == "create"%}
+<h3>Create a New Discussion Board</h3>
+<form method="POST" action="">
+    {% csrf_token %}
+    <label>Title: </label>
+    <input type="text" name="title" placeholder="Creative, descriptive title..." required />
+    <br>
+    <label>Description: </label>
+    <br>
+    <textarea name="desc" placeholder="A short description to spark discussion..."></textarea>
+    <br> 
+    <label>self-moderated</label>
+    <input type="checkbox" value="yes" name="self" />
+    <br>
+    <label>Username of other moderator(s): </label>
+    <input type="text" name="moderators" placeholder="Helpful moderators..."/>
+    <br>
+    <label>Most relevant skill:<label>
+    <select name="skill">
+        <option value="">--Select Skill--</option>
+        {% for s in skills%}
+        <option value="{{s.id}}">{{s.name}}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Create Board</button>
+</form>
+{% else %}
+<h3>Update Your Discussion Board</h3>
+<form method="POST" action="">
+    {% csrf_token %}
+    <label>Title: </label>
+    <input type="text" name="title" placeholder="Creative, descriptive title..." value="{{btitle}}" required />
+    <br>
+    <label>Description: </label>
+    <br>
+    <textarea name="desc" placeholder="A short description to spark discussion..." value="{{bdesc}}"></textarea>
+    <br> 
+    <label>self-moderated</label>
+    <input type="checkbox" name="self" value="yes" {% if checked == "yes" %} {% else %} checked {%endif%}/>
+    <br>
+    <label>Username of other moderator(s): </label>
+    <input type="text" name="moderators" placeholder="Helpful moderators..." value="{{bmods}}"/>
+    <br>
+    <label>Most relevant skill:<label>
+    <select name="skill" value="{{bskill}}">
+        <option value="">--Select Skill--</option>
+        {% for s in skills%}
+        <option value="{{s.id}}">{{s.name}}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Create Board</button>
+</form>
+{% endif %}
+{% endblock %}
