@@ -1,29 +1,76 @@
 {% extends 'template.html' %}
 
+{% block title %}
+<title>PeerSkill | {{ u.username }}'s Profile</title>
+{% endblock %}
+
 {% block content %}
-<h2>{{u.username}}'s Profile</h2>
-<h3>My name </h3>
-<p>{{u.first_name}} {{u.last_name}}</p>
-<h3>About Me:<h3>
-<p>{{p.about}} </p>
-<h3>Located: <h3>
-<p> {{p.town}}, {{p.state}}, {{p.zipcode}}</p>
-<h3>My Rating: <h3>
-<p> {{u.rating}}/5.0 stars from {{u.rating_count}}</p>
-<h3>My Recent Reviews: </h3>
-{% if reviews%}
-{% for r in reviews %}
-<p>{{r.author.username}}'s Review</p> 
-<p><i>{{r.time_created}}</i></p>
-<p>Rating: {{r.rating}}/5.0</p>
-<p> {{r.message}}</p>
-{% endfor %}
-{% else%}
-<p>I don't have any ratings yet.</p>
-{%endif%}
-{% if u.username == request.user.username%}
-<a href="{% url 'user:update_profile' %}">Update Profile</a>
-{% else %}
-<a href="{% url 'user:leave_review' u.id %}">Leave Review</a>
-{% endif %}
+<div class="main">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h1>{{ u.username }}'s Profile</h1>
+        {% if u.username == request.user.username %}
+            <a href="{% url 'user:update_profile' %}" class="btn">Edit Profile</a>
+        {% endif %}
+    </div>
+</div>
+
+<section class="profile-details">
+    <div class="profile-card">
+        <div class="profile-section">
+            <h3>Name</h3>
+            <p>{{ u.first_name }} {{ u.last_name }}</p>
+        </div>
+
+        <div class="profile-section">
+            <h3>About Me</h3>
+            <p>{{ p.about|default:"No bio provided yet." }}</p>
+        </div>
+
+        <div class="profile-section">
+            <h3>Location</h3>
+            <p>{{ p.town }}, {{ p.state }} {{ p.zipcode }}</p>
+        </div>
+
+        <div class="profile-section">
+            <h3>My Skills</h3>
+            {% if u.skills.all %}
+                <ul style="list-style: none; padding: 0;">
+                    {% for skill in u.skills.all %}
+                        <li style="display: inline-block; background: #007bff; color: white; padding: 0.3rem 0.6rem; margin: 0.2rem; border-radius: 4px;">
+                            {{ skill.name }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No skills added yet.</p>
+            {% endif %}
+        </div>
+
+        <div class="profile-section">
+            <h3>My Rating</h3>
+            <p>{{ u.rating }}/5.0 stars from {{ u.rating_count }} review{{ u.rating_count|pluralize }}</p>
+        </div>
+
+        <div class="profile-section">
+            <h3>Recent Reviews</h3>
+            {% if reviews %}
+                {% for r in reviews %}
+                    <div class="review-card" style="border-left: 3px solid #007bff; padding-left: 1rem; margin-bottom: 1rem;">
+                        <p><strong>{{ r.author.username }}</strong> - {{ r.time_created|date:"M d, Y" }}</p>
+                        <p>Rating: {{ r.rating }}/5.0</p>
+                        <p>{{ r.message }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No reviews yet.</p>
+            {% endif %}
+        </div>
+
+        {% if u.username != request.user.username %}
+            <div style="margin-top: 1.5rem;">
+                <a href="{% url 'user:leave_review' u.id %}" class="btn">Leave a Review</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
 {% endblock %}

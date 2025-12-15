@@ -62,6 +62,10 @@ def logoutUser(request):
 
 @login_required
 def createProfile(request):
+    # Check if profile already exists
+    if Profile.objects.filter(user=request.user).exists():
+        return redirect(reverse('user:view_profile', kwargs={'uid': request.user.id}))
+    
     if request.method == "POST":
         user = CustomUser.objects.get(username=request.user.username)
         user.last_name = request.POST.get('lname')
@@ -71,10 +75,10 @@ def createProfile(request):
         state = request.POST.get('state')
         town = request.POST.get('town')
         zipcode = request.POST.get('zip')
-        about = request.POST.get('about_me')
+        about = request.POST.get('about_me', '')
         
         Profile.objects.create(user=user, town=town, state=state, zipcode=zipcode, about=about)
-        return render(reverse('user:view_profile', kwargs={'uid': user.id})) 
+        return redirect('user:view_profile', uid=user.id)
     return render(request, 'create_profile.html', {'action':'create'})
 
 @login_required
@@ -88,15 +92,20 @@ def updateProfile(request):
         profile.state = request.POST.get('state')
         profile.town = request.POST.get('town')
         profile.zipcode = request.POST.get('zip')
+        profile.about = request.POST.get('about', '')
         
         user.skills.clear()
         skills_ids = request.POST.getlist("skills")
         for id in skills_ids:
             if id != "":
-                user.skills.add(int(id))
+                # Handle comma-separated values
+                for skill_id in id.split(','):
+                    skill_id = skill_id.strip()
+                    if skill_id:
+                        user.skills.add(int(skill_id))
         user.save()
         profile.save()
-        return redirect(reverse('user:view_profile', kwargs={'uid': user.id}))
+        return redirect('user:view_profile', uid=user.id)
     context ={
         'finame' : user.first_name,
         'laname' : user.last_name,
@@ -112,12 +121,20 @@ def updateProfile(request):
 
 @login_required
 def viewProfile(request, uid):
-    if not Profile.objects.filter(user=request.user).exists():
-        if request.user.id == uid:
-            return redirect('user:create_profile')
-        return redirect('peer:home') #Possibly Replace with a standard 404-esq 
     user = get_object_or_404(CustomUser, pk=uid)
-    profile = get_object_or_404(Profile, user=user)
+    
+    # Get or create profile - this will save to DB if it doesn't exist
+    profile, created = Profile.objects.get_or_create(
+        user=user,
+        defaults={
+            'town': '',
+            'state': '',
+            'zipcode': '',
+            'about': '',
+            'skills': ''
+        }
+    )
+    
     reviews = list(Review.objects.filter(receiver=user))
     context = {
         'u' : user,
