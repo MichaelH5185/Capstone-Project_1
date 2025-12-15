@@ -5,16 +5,16 @@
 <h2>{{b.title}}</h2>
 <p>{{b.description}}</p>
 {% if delete %}
-<a href="{% url 'board:delete_board' b.id %}">Delete Board</a>
-<a href="{% url 'board:edit_board' b.id%}">Edit Board</a>
+<a href="{% url 'board:delete_board' b.id %}" style="border:none;">Delete Board</a>
+<a href="{% url 'board:edit_board' b.id%}" style="border:none;">Edit Board</a>
 {% endif %}
 <form method="POST">{%csrf_token%}</form> <!--Dummy Form to steal csrf_token-->
 <br>
-<button onclick="toggleReplyForm()">Reply</button>
+<button onclick="toggleReplyForm()" class="btn small" style="border:none;">Reply</button>
 <hr>
 <div id="reply-form" style="display:none;">
     <textarea id="reply-content" rows="4"></textarea>
-    <button onclick="submitReply()">Post</button>
+    <button onclick="submitReply()" class="btn small" style="border:none;">Post</button>
 </div>
 <form>
 
@@ -75,12 +75,12 @@ function submitReply(replyId=null) {
                 <strong>${new_rep.poster}</strong>
                 <p>${new_rep.timeposted}</p> 
                 <p>${new_rep.content}</p>
-                <button onclick="toggleReplyForm(${new_rep.id})">Reply</button>
-                <a href="http://127.0.0.1:8000/board/view/messages/${new_rep.id}/delete/">Delete</a>
+                <button onclick="toggleReplyForm(${new_rep.id})" class="btn small">Reply</button>
+                <a href="http://127.0.0.1:8000/board/view/messages/${new_rep.id}/delete/" class="btn danger small">Delete</a>
                 <hr>
                 <div id="reply-to-${new_rep.id}" style="display:none;">
                     <textarea id="reply-content-${new_rep.id}" rows="4"></textarea>
-                    <button onclick="submitReply(${new_rep.id})">Post</button>
+                    <button onclick="submitReply(${new_rep.id})" class="btn small">Post</button>
                 </div>
                 <div id="children_${new_rep.id}">
                 </div>
