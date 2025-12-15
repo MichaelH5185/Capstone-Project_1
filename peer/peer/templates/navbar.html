@@ -9,7 +9,7 @@
 
     <ul class="nav-links">
         <li><a href="{% url 'peer:home' %}">Home</a></li>
-        <li><a href="{% url 'peer:create_listing' %}">Listings</a></li>
+        <li><a href="{% url 'peer:view_listings' %}">Listings</a></li>
         <li><a href="{% url 'peer:create-skill'%}">Create Skill</a></li>
         <li><a href="{% url 'board:board_home' %}">Boards</a></li>
         {% if request.user.is_authenticated %}
