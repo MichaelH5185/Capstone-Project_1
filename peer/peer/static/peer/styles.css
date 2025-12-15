@@ -139,3 +139,17 @@ body{
   .brand-text{display:none}
   .cards{grid-template-columns:1fr}
 }
+
+.profile-details{
+  display: flex;
+  align-items: flex-start;
+  gap: 3rem;
+}
+.profile-main {
+    flex: 1 1 80%;
+    max-width: 80%;
+}
+.profile-card{
+  flex: 0 0 20%;
+  max-width: 20%;
+}

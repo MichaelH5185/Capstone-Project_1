@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login, logout, get_user
 from django.contrib import messages
-from peer.models import CustomUser, Skill, Profile, Review
+from peer.models import CustomUser, Skill, Profile, Review,Listing, Board
 from django.urls import reverse
 
 def loginPage(request):
@@ -128,13 +128,32 @@ def viewProfile(request, uid):
     user = get_object_or_404(CustomUser, pk=uid)
     
     # Get or create profile - this will save to DB if it doesn't exist
-    profile = get_object_or_404(Profile, user=user)
+    profile, created = Profile.objects.get_or_create(
+        user=user,
+        defaults={
+            'town': '',
+            'state': '',
+            'zipcode': '',
+            'about': '',
+            'skills': ''
+        }
+    )
     
     reviews = list(Review.objects.filter(receiver=user))
+    listings = list(Listing.objects.filter(author=user).order_by("-created_at"))
+    boards = []
+    for b in Board.objects.all().order_by("-created"):
+        if b.creator == user or b.moderators.filter(id=user.id).exists():
+            boards.append(b)
+    for m in user.bmessages.all():
+        if m.board not in boards:
+            boards.append(m.board)
     context = {
         'u' : user,
         'p' : profile,
-        'reviews': reviews[:5]
+        'reviews': reviews[:50],
+        'listings': listings[:50],
+        'boards': boards[:50]
     }
     return render(request, 'display_profile.html', context)
 
