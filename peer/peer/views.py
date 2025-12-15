@@ -22,7 +22,7 @@ def create_listing(request):
             # request.user is authenticated because view is protected
             listing.author = request.user
             listing.save()
-            return redirect('home')
+            return redirect('peer:home')
     else:
         form = ListingForm()
     return render(request, 'peer/listing_form.html', {'form': form})
@@ -34,7 +34,7 @@ def register(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('peer:login')
     else:
         form = UserRegistrationForm()
     return render(request, 'peer/register.html', {'form': form})
@@ -62,7 +62,7 @@ def send_message(request, listing_id=None):
             if listing:
                 msg.listing = listing
             msg.save()
-            return redirect('home')
+            return redirect('peer:home')
     else:
         form = MessageForm()
 

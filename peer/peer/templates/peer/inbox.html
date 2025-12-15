@@ -20,7 +20,7 @@
                     </div>
                     {% if msg.listing %}
                         <div class="message-about">
-                            <small>About listing: <a href="{% url 'home' %}">{{ msg.listing.title }}</a></small>
+                            <small>About listing: <a href="{% url 'peer:home' %}">{{ msg.listing.title }}</a></small>
                         </div>
                     {% endif %}
                     <div class="message-content">

@@ -2,7 +2,7 @@
     {% if reply.poster == null%}
     <strong><i>Deleted User</i></strong>
     {% else %}
-    <strong>{{reply.poster}}</strong>
+    <strong><a href="{% url 'user:view_profile' reply.poster.id %}">{{reply.poster}}</a></strong>
     {% endif %}
     <p>{{reply.time_posted}}</p>  
     <p>{{reply.content}}</p>

@@ -76,6 +76,7 @@ function submitReply(replyId=null) {
                 <p>${new_rep.timeposted}</p> 
                 <p>${new_rep.content}</p>
                 <button onclick="toggleReplyForm(${new_rep.id})">Reply</button>
+                <a href="board/view/messages/${new_rep.id}/delete/">Delete</a>
                 <hr>
                 <div id="reply-to-${new_rep.id}" style="display:none;">
                     <textarea id="reply-content-${new_rep.id}" rows="4"></textarea>

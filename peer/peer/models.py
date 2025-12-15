@@ -92,8 +92,8 @@ class Message(models.Model):
 
 
 class Review(models.Model):
-    author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="reviews_received")
-    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False)
+    author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True )
+    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False, related_name="reviews_received")
     message = models.CharField(max_length=200, null=True, blank=True)
     rating = models.IntegerField(default=5)
     time_created = models.DateTimeField(auto_now_add=True)
