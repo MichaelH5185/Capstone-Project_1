@@ -10,9 +10,9 @@
 </div>
 
 <section class="messages">
-    {% if messages_list %}
+    {% if messages %}
         <div class="cards">
-            {% for msg in messages_list %}
+            {% for msg in messages %}
                 <article class="card message-card">
                     <div class="message-header">
                         <strong>From: {{ msg.sender.username|default:"Anonymous" }}</strong>
