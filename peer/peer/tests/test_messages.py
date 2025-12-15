@@ -70,10 +70,10 @@ class MessageTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         
         # Should only show messages for this recipient (2 messages)
-        self.assertEqual(len(resp.context['messages']), 2)
+        self.assertEqual(len(resp.context['messages_list']), 2)
         
         # Verify messages contain correct content
-        messages = list(resp.context['messages'])
+        messages = list(resp.context['messages_list'])
         self.assertIn('Message 1', [m.content for m in messages])
         self.assertIn('Message 2', [m.content for m in messages])
 
