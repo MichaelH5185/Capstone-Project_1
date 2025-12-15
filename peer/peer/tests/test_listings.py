@@ -48,3 +48,4 @@ class ListingTests(TestCase):
         # should be forbidden
         self.assertEqual(resp.status_code, 403)
         self.assertEqual(Listing.objects.filter(id=listing.id).count(), 1)
+ 
