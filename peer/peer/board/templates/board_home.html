@@ -9,7 +9,7 @@
 {% for b in boards%}
 <a href="{% url 'board:display_board' b.id %}">{{b.title}}</a>
 <p>{{b.description}}</p>
-<p>Skill: {{b.skill}} Created: {{b.created}} Creator: {{b.creator}}</p>
+<p>Skill: {{b.skill.name}} Created: {{b.created}} Creator: {{b.creator}}</p>
 <hr>
 {% endfor %}
 {% endblock content%}

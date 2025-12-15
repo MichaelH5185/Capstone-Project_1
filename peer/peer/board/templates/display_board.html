@@ -1,5 +1,6 @@
 {% extends "template.html" %}
 
+
 {% block content %}
 <h2>{{b.title}}</h2>
 <p>{{b.description}}</p>
@@ -7,8 +8,93 @@
 <a href="{% url 'board:delete_board' b.id %}">Delete Board</a>
 <a href="{% url 'board:edit_board' b.id%}">Edit Board</a>
 {% endif %}
+<form method="POST">{%csrf_token%}</form> <!--Dummy Form to steal csrf_token-->
 <br>
-<a href="">reply</a>
+<button onclick="toggleReplyForm()">Reply</button>
 <hr>
+<div id="reply-form" style="display:none;">
+    <textarea id="reply-content" rows="4"></textarea>
+    <button onclick="submitReply()">Post</button>
+</div>
+<form>
+
+</form>
 <!--Display Board Messages-->
+<div id="replies">
+{% for b in boardmessages %}
+    {%include "partials/reply.html" with reply=b%}
+{% endfor %}
+</div>
+<script>
+function toggleReplyForm(replyId=null) {
+    let form;
+    if(replyId !== null){
+        form = document.getElementById(`reply-to-${replyId}`); 
+    }else{
+        form = document.getElementById("reply-form");
+    }
+    form.style.display = form.style.display === "none" ? "block" : "none";
+}
+
+function submitReply(replyId=null) {
+    let content;
+    if(replyId !== null){
+        content = document.getElementById(`reply-content-${replyId}`).value;
+    }else{
+        content = document.getElementById("reply-content").value;
+    }
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch("{% url 'board:post_board_message' b.id %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+        },
+        body: new URLSearchParams({
+            content: content,
+            reply_to: replyId
+        })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Request failed");
+        return response.json();})
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        let repliesDiv;
+        const new_rep = data.new_reply;
+        if(new_rep.reply_to !== null){
+            repliesDiv = document.getElementById(`children_${new_rep.reply_to}`);
+        }else{
+            repliesDiv = document.getElementById("replies");
+        }
+        repliesDiv.innerHTML += `
+            <div class="reply" style="padding-left: calc(${new_rep.depth}*2rem);">
+                <strong>${new_rep.poster}</strong>
+                <p>${new_rep.timeposted}</p> 
+                <p>${new_rep.content}</p>
+                <button onclick="toggleReplyForm(${new_rep.id})">Reply</button>
+                <hr>
+                <div id="reply-to-${new_rep.id}" style="display:none;">
+                    <textarea id="reply-content-${new_rep.id}" rows="4"></textarea>
+                    <button onclick="submitReply(${new_rep.id})">Post</button>
+                </div>
+                <div id="children_${new_rep.id}">
+                </div>
+            </div>
+        `;
+        if(replyId !== null){
+            document.getElementById(`reply-content-${replyId}`).value = "";
+        }else{
+            document.getElementById("reply-content").value = "";
+        }
+        toggleReplyForm(replyId);
+    }).catch(err => {
+        console.error(err);
+        alert("Something went wrong posting your reply.");
+    });
+}
+</script>
 {% endblock %}

@@ -1,0 +1,23 @@
+<div class="reply" style="padding-left: calc({{reply.depth}}*2rem);">
+    {% if reply.poster == null%}
+    <strong><i>Deleted User</i></strong>
+    {% else %}
+    <strong>{{reply.poster}}</strong>
+    {% endif %}
+    <p>{{reply.time_posted}}</p>  
+    <p>{{reply.content}}</p>
+    <button onclick="toggleReplyForm({{reply.id}})">Reply</button>
+    {% if reply.poster == user or delete%}
+    <a href="{% url 'board:delete_board_message' reply.id%}">Delete</a>
+    {%endif%}
+    <hr>
+    <div id="reply-to-{{reply.id}}" style="display:none;">
+        <textarea id="reply-content-{{reply.id}}" rows="4"></textarea>
+        <button onclick="submitReply({{reply.id}})">Post</button>
+    </div>
+    <div id="children_{{reply.id}}">
+        {% for c in reply.replies.all%}
+            {% include "partials/reply.html" with reply=c %}
+        {% endfor %}
+    </div>
+</div>

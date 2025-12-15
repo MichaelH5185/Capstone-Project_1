@@ -110,7 +110,8 @@ class Board(models.Model):
 
 class BoardMessage(models.Model):
     poster = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
-    reply_to = models.ForeignKey("self", on_delete=models.SET_NULL, related_name="Replies", null=True)
+    reply_to = models.ForeignKey("self", on_delete=models.CASCADE, related_name="replies", null=True, blank=True)
     content = models.TextField()
     time_posted = models.DateTimeField(auto_now_add=True)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, null=False)
+    depth = models.IntegerField(default=0)

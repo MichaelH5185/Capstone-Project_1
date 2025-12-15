@@ -3,9 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login, logout, get_user
 from django.contrib import messages
-from peer.models import CustomUser, Board, Skill
+from peer.models import CustomUser, Board, Skill, BoardMessage
 from django.urls import reverse
 import re 
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
 
 @login_required
@@ -93,10 +95,9 @@ def edit_board(request, bid):
 def delete_board(request, bid):
     board = get_object_or_404(Board, pk=bid)
     req_user = get_object_or_404(CustomUser, pk=request.user.id)
-    if board.creator != req_user and req_user not in board.moderators:
+    if board.creator != req_user and not board.moderators.filter(id=request.user.id).exists():
         raise PermissionDenied()
-    if request.method == 'POST':
-        board.delete()
+    board.delete()
     return redirect('board:board_home')
 
 @login_required
@@ -104,10 +105,48 @@ def display_board(request, bid):
     board = get_object_or_404(Board, pk=bid)
     req_user = get_object_or_404(CustomUser, pk=request.user.id)
     context = {'b' : board}
-    if board.creator == req_user or req_user in board.moderators:
+    if board.creator == req_user or board.moderators.filter(id=request.user.id).exists():
         context['delete'] = True
-    #add the board messages
+    bms = BoardMessage.objects.filter(board=board, reply_to=None).order_by("time_posted")
+    context['boardmessages'] = bms
+    context['user'] = request.user
     return render(request, "display_board.html", context)
+
+@login_required
+def delete_board_message(request, bmid):
+    bm = get_object_or_404(BoardMessage, pk=bmid)
+    if bm.poster != request.user and not bm.board.moderators.filter(id=request.user.id).exists():
+        raise PermissionDenied()
+    bm.content = "Deleted by User or Moderator Team"
+    bm.save()
+    return redirect(reverse('board:display_board', kwargs={'bid': bm.board.id}))
+
+@login_required
+@require_POST
+def post_board_message(request, bid):
+    board = get_object_or_404(Board, pk=bid)
+    content = request.POST.get("content", "").strip()
+    reply_to_id = request.POST.get("reply_to")
+    reply_to = None
+    #Consider limiting depth or forcing redirect if depth too large
+    depth = 0
+    if reply_to_id not in ["", "null", None]:
+        reply_to = get_object_or_404(BoardMessage, id=reply_to_id)
+        depth = reply_to.depth+1
+    if not content:
+        return JsonResponse({"error": "Reply cannot be empty"}, status=400) 
+    
+    bm = BoardMessage.objects.create(poster=request.user, reply_to=reply_to, content=content, board=board, depth=depth)
+    return JsonResponse(
+        {"new_reply": {
+            "id": bm.id,
+            "poster": bm.poster.username,
+            "content": bm.content,
+            "timeposted": bm.time_posted.strftime("%Y-%m-%d %H:%M"),
+            "reply_to": bm.reply_to.id if bm.reply_to else None,
+            "depth": bm.depth,
+        }}
+    )
 
 def board_home(request):
     #add better rendering logic and search capabilities
