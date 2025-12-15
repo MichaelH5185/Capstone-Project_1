@@ -2,7 +2,7 @@
 <nav class="navbar">
     <div class="nav-left">
         <a class="brand" href="{% url 'peer:home' %}">
-            <img src="{% static 'peer/logo.png' %}" alt="Site logo" class="logo">
+            <img src="{% static 'peer/Logo.png' %}" alt="Site logo" class="logo">
             <span class="brand-text">PeerSkill</span>
         </a>
     </div>
@@ -10,7 +10,7 @@
     <ul class="nav-links">
         <li><a href="{% url 'peer:home' %}">Home</a></li>
         <li><a href="{% url 'peer:create_listing' %}">Listings</a></li>
-        <li><a href="{% url 'peer:create-skill'%}">Create Skill</a></li>
+        <li><a href="{% url 'peer:create-skill' %}">Create Skill</a></li>
         {% if request.user.is_authenticated %}
             <li><a href="{% url 'peer:inbox' %}">Messages</a></li>
         {% endif %}

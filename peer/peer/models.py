@@ -15,7 +15,6 @@ class CustomUser(AbstractUser):
     rating_count = models.IntegerField(default=0)
 
 
-#Should we change it so that if the user that created the listing is deleted it deletes the posting?
 class Listing(models.Model):
     """A skill listing or a request posted by a user."""
     author = models.ForeignKey(
@@ -30,7 +29,7 @@ class Listing(models.Model):
     location = models.CharField(max_length=200, blank=True)
     is_request = models.BooleanField(
         default=False,
-        help_text="If true this is a request, otherwise an offer",
+        help_text="Check if this is a request for help (otherwise it's an offer)",
     )
     price = models.DecimalField(
         max_digits=8, decimal_places=2, null=True, blank=True
@@ -48,7 +47,7 @@ class Profile(models.Model):
     zipcode = models.CharField(max_length=20, blank=True)
     state = models.CharField(max_length=50, blank=True)
     about = models.TextField(blank=True)
-    
+
     def __str__(self):
         return f"Profile for {self.user.username}"
 
