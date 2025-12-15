@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 
-from .models import Listing, Message, Skill
+from .models import Listing, Message, Skill, CustomUser
 from .forms import ListingForm, MessageForm, UserRegistrationForm
 
 
@@ -46,12 +46,20 @@ def register(request):
 
 
 @login_required
-def send_message(request, listing_id=None):
+def send_message(request, listing_id=None, recipient_id=None, message_id=None):
     listing = None
     recipient = None
-    if listing_id:
+    
+    if message_id:
+        # Reply to an existing message
+        original_message = get_object_or_404(Message, pk=message_id)
+        recipient = original_message.sender
+        listing = original_message.listing  # Inherit listing from original message
+    elif listing_id:
         listing = get_object_or_404(Listing, pk=listing_id)
         recipient = listing.author
+    elif recipient_id:
+        recipient = get_object_or_404(CustomUser, pk=recipient_id)
 
     if request.method == 'POST':
         form = MessageForm(request.POST)
@@ -71,7 +79,7 @@ def send_message(request, listing_id=None):
     else:
         form = MessageForm()
 
-    return render(request, 'peer/message_form.html', {'form': form, 'listing': listing})
+    return render(request, 'peer/message_form.html', {'form': form, 'listing': listing, 'recipient': recipient})
 
 
 @login_required
@@ -82,6 +90,9 @@ def delete_listing(request, listing_id):
         raise PermissionDenied()
 
     if request.method == 'POST':
+        # Delete all messages related to this listing
+        Message.objects.filter(listing=listing).delete()
+        # Delete the listing
         listing.delete()
         return redirect('peer:home')
 
@@ -92,7 +103,7 @@ def delete_listing(request, listing_id):
 def inbox(request):
     """Display all messages received by the current user."""
     messages_list = Message.objects.filter(recipient=request.user).select_related('sender', 'listing').order_by('-created_at')
-    return render(request, 'peer/inbox.html', {'messages': messages_list})
+    return render(request, 'peer/inbox.html', {'messages_list': messages_list})
 
 
 def create_new_skill(request):
