@@ -19,7 +19,7 @@ class ListingTests(TestCase):
             'is_request': False,
             'price': '10.00',
         }
-        resp = self.client.post(reverse('create_listing'), data)
+        resp = self.client.post(reverse('peer:create_listing'), data)
         # after creation should redirect to home
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(Listing.objects.count(), 1)
@@ -29,7 +29,7 @@ class ListingTests(TestCase):
         user = User.objects.create_user(username='owner', password='pwd')
         self.client.login(username='owner', password='pwd')
         listing = Listing.objects.create(title='ToDelete', author=user)
-        url = reverse('delete_listing', args=[listing.id])
+        url = reverse('peer:delete_listing', args=[listing.id])
         # GET should show confirmation
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
@@ -43,7 +43,7 @@ class ListingTests(TestCase):
         other = User.objects.create_user(username='other', password='pwd')
         listing = Listing.objects.create(title='KeepMe', author=owner)
         self.client.login(username='other', password='pwd')
-        url = reverse('delete_listing', args=[listing.id])
+        url = reverse('peer:delete_listing', args=[listing.id])
         resp = self.client.post(url)
         # should be forbidden
         self.assertEqual(resp.status_code, 403)

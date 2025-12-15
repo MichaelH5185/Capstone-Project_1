@@ -13,7 +13,7 @@ class MessageTests(TestCase):
         user = User.objects.create_user(username='msguser', password='pwd')
         self.client.login(username='msguser', password='pwd')
         listing = Listing.objects.create(title='L1')
-        url = reverse('send_message', args=[listing.id])
+        url = reverse('peer:send_message', args=[listing.id])
         data = {'sender_name': 'Tester', 'content': 'Hi, I am interested'}
         resp = self.client.post(url, data)
         self.assertEqual(resp.status_code, 302)
@@ -25,7 +25,7 @@ class MessageTests(TestCase):
 
     def test_anonymous_messaging_requires_login(self):
         listing = Listing.objects.create(title='L-Anonymous')
-        url = reverse('send_message', args=[listing.id])
+        url = reverse('peer:send_message', args=[listing.id])
         # anonymous user should be redirected to login when attempting to message
         resp = self.client.post(url, {'sender_name': '', 'content': 'Hi'})
         self.assertEqual(resp.status_code, 302)
@@ -76,7 +76,7 @@ class MessageTests(TestCase):
 
     def test_inbox_requires_login(self):
         # Anonymous user should be redirected to login
-        resp = self.client.get(reverse('inbox'))
+        resp = self.client.get(reverse('peer:inbox'))
         self.assertEqual(resp.status_code, 302)
         self.assertIn('/accounts/login/', resp.url)
 
