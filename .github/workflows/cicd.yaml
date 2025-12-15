@@ -12,7 +12,8 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     defaults:
-      working-directory: ./peer
+      run:
+        working-directory: ./peer
 
     steps:
       - name: Checkout code
