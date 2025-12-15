@@ -114,12 +114,12 @@ def display_board(request, bid):
 
 @login_required
 def delete_board_message(request, bmid):
-    bm = get_object_or_404(BoardMessage, pk=bmid)
+    bm = get_object_or_404(BoardMessage, id=int(bmid))
     if bm.poster != request.user and not bm.board.moderators.filter(id=request.user.id).exists():
         raise PermissionDenied()
     bm.content = "Deleted by User or Moderator Team"
     bm.save()
-    return redirect(reverse('board:display_board', kwargs={'bid': bm.board.id}))
+    return redirect('board:display_board', bm.board.id)
 
 @login_required
 @require_POST
