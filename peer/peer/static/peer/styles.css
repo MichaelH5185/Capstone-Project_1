@@ -67,6 +67,9 @@ body{
   gap:10px;
 }
 
+.reply button{
+  border:none; 
+}
 .btn{
   background:var(--accent);
   color:white;

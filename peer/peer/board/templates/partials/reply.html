@@ -6,14 +6,14 @@
     {% endif %}
     <p>{{reply.time_posted}}</p>  
     <p>{{reply.content}}</p>
-    <button onclick="toggleReplyForm({{reply.id}})">Reply</button>
+    <button onclick="toggleReplyForm({{reply.id}})" class="btn small">Reply</button>
     {% if reply.poster == user or delete%}
-    <a href="{% url 'board:delete_board_message' reply.id%}">Delete</a>
+    <a href="{% url 'board:delete_board_message' reply.id%}" class="btn danger small">Delete</a>
     {%endif%}
     <hr>
     <div id="reply-to-{{reply.id}}" style="display:none;">
         <textarea id="reply-content-{{reply.id}}" rows="4"></textarea>
-        <button onclick="submitReply({{reply.id}})">Post</button>
+        <button onclick="submitReply({{reply.id}})" class="btn small">Post</button>
     </div>
     <div id="children_{{reply.id}}">
         {% for c in reply.replies.all%}
