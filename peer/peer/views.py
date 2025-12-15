@@ -39,7 +39,7 @@ def register(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('peer:login')
     else:
         form = UserRegistrationForm()
     return render(request, 'peer/register.html', {'form': form})

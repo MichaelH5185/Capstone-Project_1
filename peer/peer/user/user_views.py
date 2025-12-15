@@ -78,7 +78,7 @@ def createProfile(request):
         about = request.POST.get('about_me', '')
         
         Profile.objects.create(user=user, town=town, state=state, zipcode=zipcode, about=about)
-        return redirect('user:view_profile', uid=user.id)
+        return redirect(reverse('user:view_profile', kwargs={'uid': user.id})) 
     return render(request, 'create_profile.html', {'action':'create'})
 
 @login_required
@@ -121,19 +121,14 @@ def updateProfile(request):
 
 @login_required
 def viewProfile(request, uid):
+    if not Profile.objects.filter(user=request.user).exists():
+        if request.user.id == uid:
+            return redirect('user:create_profile')
+        return redirect('peer:home')
     user = get_object_or_404(CustomUser, pk=uid)
     
     # Get or create profile - this will save to DB if it doesn't exist
-    profile, created = Profile.objects.get_or_create(
-        user=user,
-        defaults={
-            'town': '',
-            'state': '',
-            'zipcode': '',
-            'about': '',
-            'skills': ''
-        }
-    )
+    profile = get_object_or_404(Profile, user=user)
     
     reviews = list(Review.objects.filter(receiver=user))
     context = {
@@ -147,17 +142,29 @@ def viewProfile(request, uid):
 def leaveReview(request, uid):
     receiver = get_object_or_404(CustomUser, pk=uid)
     sender = get_object_or_404(CustomUser, pk=request.user.id)
+    context = {'u' : receiver}
+    review_obj = Review.objects.filter(receiver=receiver, author=sender)[0]
+    if review_obj:
+        context['rating'] = review_obj.rating
+        context['review'] = review_obj.message
     if request.method == "POST":
         rating = request.POST.get("rating")
         review = request.POST.get("review")
         
-        Review.objects.create(author=sender, receiver=receiver, message=review, rating=rating)
+        if review_obj:
+            review_obj.rating = rating
+            review_obj.review = review
+            review_obj.save()
+        else:
+            Review.objects.create(author=sender, receiver=receiver, message=review, rating=rating)
         
         num_rev = receiver.rating_count
-        cur_rat = receiver.rating
-        receiver.rating = round((((cur_rat*num_rev)+rating) / (num_rev+1)), 3) #decide wether it's worth it to recalculate the true mean using Review object 
+        total = 0
+        for r in receiver.reviews_received.all():
+            total += r.rating
         receiver.rating_count += 1 
+        receiver.rating = round((total/receiver.rating_count), 3)
         receiver.save()
-        redirect('peer:home')
-    #add logic to prevent more than one review on the same person
-    return render(request, 'create_review.html', {'u' : receiver})
+        return redirect('peer:home')
+    
+    return render(request, 'create_review.html', context=context)

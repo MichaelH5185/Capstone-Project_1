@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include("peer.urls", namespace="peer")),
-    path('user/', include("peer.user.user_urls", namespace="user"))
+    path('user/', include("peer.user.user_urls", namespace="user")),
+    path('board/', include("peer.board.board_urls", namespace="board"))
 ]

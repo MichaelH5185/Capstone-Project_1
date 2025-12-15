@@ -15,12 +15,13 @@ class CustomUser(AbstractUser):
     rating_count = models.IntegerField(default=0)
 
 
+
 class Listing(models.Model):
     """A skill listing or a request posted by a user."""
     author = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
-        null=True,
+        null=False,
         blank=True,
         related_name="listings",
     )
@@ -91,8 +92,8 @@ class Message(models.Model):
 
 
 class Review(models.Model):
-    author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="reviews_received")
-    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False)
+    author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True )
+    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False, related_name="reviews_received")
     message = models.CharField(max_length=200, null=True, blank=True)
     rating = models.IntegerField(default=5)
     time_created = models.DateTimeField(auto_now_add=True)
@@ -100,15 +101,17 @@ class Review(models.Model):
 
 class Board(models.Model):
     skill = models.ForeignKey(Skill, on_delete=models.SET_NULL, null=True)
-    sub_skill = models.CharField(max_length=50)
+    title = models.CharField(max_length=100, null=True)
+    description = models.CharField(max_length=200, null=True) 
     creator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="creator")
     created = models.DateTimeField(auto_now_add=True)
-    moderator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="moderator")
+    moderators = models.ManyToManyField(CustomUser, blank=True, related_name="moderators")
 
 
 class BoardMessage(models.Model):
     poster = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
-    reply_to = models.ForeignKey("self", on_delete=models.SET_NULL, related_name="Replies", null=True)
+    reply_to = models.ForeignKey("self", on_delete=models.CASCADE, related_name="replies", null=True, blank=True)
     content = models.TextField()
     time_posted = models.DateTimeField(auto_now_add=True)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, null=False)
+    depth = models.IntegerField(default=0)

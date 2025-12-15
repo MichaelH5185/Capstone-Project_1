@@ -55,7 +55,9 @@ ROOT_URLCONF = 'peerSkill.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'peer' / 'templates', BASE_DIR / 'peer' / 'user' / 'templates'],
+        'DIRS': [BASE_DIR / 'peer' / 'templates', 
+                 BASE_DIR / 'peer' / 'user' / 'templates', 
+                 BASE_DIR / 'peer' / 'board' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

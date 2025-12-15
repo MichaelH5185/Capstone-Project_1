@@ -25,6 +25,10 @@ class SkillAdmin(admin.ModelAdmin):
 
 @admin.register(Board)
 class BoardAdmin(admin.ModelAdmin):
-    list_display = ('id', 'skill', 'sub_skill', 'created', 'creator', 'moderator')
-    search_fields = ('id', 'skill', 'sub_skill', 'creator', 'moderator')
-    
+    list_display = ('id', 'skill', 'description', 'title', 'created', 'creator')
+    search_fields = ('id', 'skill', 'creator')
+
+@admin.register(BoardMessage)
+class BoardMessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'poster', 'content', 'reply_to', 'board', 'depth', 'time_posted')
+    search_fields = ('id', 'poster', 'board')
