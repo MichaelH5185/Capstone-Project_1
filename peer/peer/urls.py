@@ -5,6 +5,7 @@ app_name = "peer"
 
 urlpatterns = [
     path('', views.home, name="home"),
+    path('listings/', views.view_listings, name="view_listings"),
     path('user/', include('peer.user.user_urls', namespace="user")),
     #path('board/', include('peer.board.board_urls')),
     path('listing/', include('peer.listing.listing_urls')), 

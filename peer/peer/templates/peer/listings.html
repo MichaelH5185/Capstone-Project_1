@@ -1,0 +1,54 @@
+{% extends 'template.html' %}
+
+{% block title %}
+<title>PeerSkill | Listings</title>
+{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h1>All Listings</h1>
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'peer:create_listing' %}" class="btn">+ Create Listing</a>
+        {% endif %}
+    </div>
+</div>
+
+<section class="listings">
+    {% if listings %}
+        <div class="cards">
+            {% for listing in listings %}
+                <article class="card listing-card">
+                    <div class="listing-header">
+                        <h3>{{ listing.title }}</h3>
+                        <span class="listing-type">{{ listing.is_request|yesno:"Request,Offer" }}</span>
+                    </div>
+                    <div class="listing-details">
+                        <p><strong>By:</strong> {{ listing.author.username|default:"Anonymous" }}</p>
+                        {% if listing.location %}
+                            <p><strong>Location:</strong> {{ listing.location }}</p>
+                        {% endif %}
+                        {% if listing.price %}
+                            <p><strong>Price:</strong> ${{ listing.price }}</p>
+                        {% endif %}
+                        <p><strong>Posted:</strong> {{ listing.created_at|date:"M d, Y" }}</p>
+                    </div>
+                    <div class="listing-description">
+                        <p>{{ listing.description|truncatewords:30 }}</p>
+                    </div>
+                    {% if request.user.is_authenticated %}
+                        <div class="listing-actions">
+                            <a href="{% url 'peer:send_message' listing.id %}" class="btn">Send Message</a>
+                            {% if listing.author == request.user %}
+                                <a href="{% url 'peer:delete_listing' listing.id %}" class="btn" style="background: #dc3545;">Delete</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No listings yet. Be the first to post one!</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,16 +1,21 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.contrib import messages
 
 from .models import Listing, Message, Skill
-from django.contrib import messages
-from .models import Listing, Skill
 from .forms import ListingForm, MessageForm, UserRegistrationForm
 
 
 def home(request):
     listings = Listing.objects.order_by('-created_at')[:20]
     return render(request, 'peer/home.html', {'listings': listings})
+
+
+def view_listings(request):
+    """Display all listings with a button to create new ones."""
+    listings = Listing.objects.order_by('-created_at')
+    return render(request, 'peer/listings.html', {'listings': listings})
 
 
 @login_required
@@ -22,7 +27,7 @@ def create_listing(request):
             # request.user is authenticated because view is protected
             listing.author = request.user
             listing.save()
-            return redirect('home')
+            return redirect('peer:home')
     else:
         form = ListingForm()
     return render(request, 'peer/listing_form.html', {'form': form})
@@ -62,22 +67,11 @@ def send_message(request, listing_id=None):
             if listing:
                 msg.listing = listing
             msg.save()
-            return redirect('home')
+            return redirect('peer:inbox')
     else:
         form = MessageForm()
 
     return render(request, 'peer/message_form.html', {'form': form, 'listing': listing})
-
-@login_required
-def create_new_skill(request):
-    if request.method == "POST":
-        name = request.POST.get("name")
-        if Skill.objects.filter(name = name).exists():
-            messages.error(request, "Skill Already Exists")
-            return redirect("peer:create-skill")
-        Skill.objects.create(name=name)
-        return redirect("peer:home")
-    return render(request, "skills/create_skill.html")
 
 
 @login_required
@@ -89,7 +83,7 @@ def delete_listing(request, listing_id):
 
     if request.method == 'POST':
         listing.delete()
-        return redirect('home')
+        return redirect('peer:home')
 
     return render(request, 'peer/listing_confirm_delete.html', {'listing': listing})
 
@@ -97,23 +91,18 @@ def delete_listing(request, listing_id):
 @login_required
 def inbox(request):
     """Display all messages received by the current user."""
-    messages = Message.objects.filter(recipient=request.user).select_related('sender', 'listing').order_by('-created_at')
-    return render(request, 'peer/inbox.html', {'messages': messages})
+    messages_list = Message.objects.filter(recipient=request.user).select_related('sender', 'listing').order_by('-created_at')
+    return render(request, 'peer/inbox.html', {'messages': messages_list})
 
 
 def create_new_skill(request):
+    """Create a new skill."""
     if request.method == "POST":
         name = request.POST.get("name")
         if Skill.objects.filter(name=name).exists():
             messages.error(request, "Skill Already Exists")
             return redirect("peer:create-skill")
         Skill.objects.create(name=name)
+        messages.success(request, f"Skill '{name}' created successfully!")
         return redirect("peer:home")
     return render(request, "skills/create_skill.html")
-
-
-@login_required
-def inbox(request):
-    """Display all messages received by the current user."""
-    messages_list = Message.objects.filter(recipient=request.user).select_related('sender', 'listing').order_by('-created_at')
-    return render(request, 'peer/inbox.html', {'messages': messages_list})
