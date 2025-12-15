@@ -64,7 +64,7 @@ class MessageTests(TestCase):
         
         # Login as recipient and view inbox
         self.client.login(username='recipient', password='pwd')
-        resp = self.client.get(reverse('inbox'))
+        resp = self.client.get(reverse('peer:inbox'))
         
         # Should be successful
         self.assertEqual(resp.status_code, 200)
@@ -89,6 +89,6 @@ class MessageTests(TestCase):
         user = User.objects.create_user(username='lonely', password='pwd', email='lonely@gmail.com')
         self.client.login(username='lonely', password='pwd')
         
-        resp = self.client.get(reverse('inbox'))
+        resp = self.client.get(reverse('peer:inbox'))
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.context['messages']), 0)
