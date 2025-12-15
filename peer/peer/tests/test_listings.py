@@ -10,7 +10,7 @@ User = get_user_model()
 class ListingTests(TestCase):
     def test_create_listing_via_view(self):
         # must be logged in to create a listing
-        user = User.objects.create_user(username='creator', password='pwd')
+        user = User.objects.create_user(username='creator', password='pwd', email='creator@gmail.com')
         self.client.login(username='creator', password='pwd')
         data = {
             'title': 'Test Offer',
@@ -26,7 +26,7 @@ class ListingTests(TestCase):
 
     def test_delete_listing_by_author(self):
         # author can delete their listing
-        user = User.objects.create_user(username='owner', password='pwd')
+        user = User.objects.create_user(username='owner', password='pwd', email="owner@gmail.com")
         self.client.login(username='owner', password='pwd')
         listing = Listing.objects.create(title='ToDelete', author=user)
         url = reverse('peer:delete_listing', args=[listing.id])
@@ -39,8 +39,8 @@ class ListingTests(TestCase):
         self.assertEqual(Listing.objects.filter(id=listing.id).count(), 0)
 
     def test_delete_listing_by_non_author_forbidden(self):
-        owner = User.objects.create_user(username='owner2', password='pwd')
-        other = User.objects.create_user(username='other', password='pwd')
+        owner = User.objects.create_user(username='owner2', password='pwd', email="owner2@gmail.com")
+        other = User.objects.create_user(username='other', password='pwd', email="other@gmail.com")
         listing = Listing.objects.create(title='KeepMe', author=owner)
         self.client.login(username='other', password='pwd')
         url = reverse('peer:delete_listing', args=[listing.id])
